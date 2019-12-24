@@ -15,6 +15,10 @@ function noclip(ply)
     end
 end
 
+AddRemoteEvent("Setnoclipserver", function(ply,bool)
+    noclipers[tostring(ply)] = bool
+  end)
+
 AddCommand("noclip", noclip)
 
 function tp_noc(ply,x,y,z)
@@ -22,6 +26,3 @@ function tp_noc(ply,x,y,z)
 end
 
 AddRemoteEvent("tp_noc", tp_noc )
-
-
-
