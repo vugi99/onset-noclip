@@ -1,4 +1,5 @@
 local noclipping = false
+local spacepressed = false
 local speed = 250
 local pressing =
 {
@@ -22,12 +23,103 @@ local keys =
 
 AddEvent("OnKeyPress", function(key)
   if key == keys['toggle'] then
-    noclipping = not noclipping
+    if (not noclipping == true) then
+      if (GetPlayerMovementMode()~=0) then
+        if (GetPlayerMovementMode()~=8) then
+        if (GetPlayerMovementMode()~=5) then
+        if (GetPlayerMovementMode()~=6) then
+        SetIgnoreMoveInput(true)
+        local tim = 50
+        if (GetPing()~=0) then
+          tim=GetPing()*6
+        end
+        Delay(tim,function()
+          noclipping = not noclipping
+          GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
+          SetIgnoreMoveInput(false)
+          CallRemoteEvent("Setnoclipserver", noclipping)
+        end)
+      else
+        local x,y,z = GetPlayerLocation()
+        local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, 25000, x, y, -100)
+           if (hittype~=7) then
+            SetIgnoreMoveInput(true)
+            local tim = 1050
+            if (GetPing()~=0) then
+              tim=GetPing()*6+1000
+            end
+            CallRemoteEvent("tp_noc", x, y, impactZ+100)
+            Delay(tim,function()
+              noclipping = not noclipping
+              GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
+              SetIgnoreMoveInput(false)
+              CallRemoteEvent("Setnoclipserver", noclipping)
+            end)
+           else
+            AddPlayerChat("Can't activate noclip")
+           end
+      end
+      else
+        local x,y,z = GetPlayerLocation()
+        local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, 25000, x, y, -100)
+           if (hittype~=7) then
+            SetIgnoreMoveInput(true)
+            local tim = 1050
+            if (GetPing()~=0) then
+              tim=GetPing()*6+1000
+            end
+            CallRemoteEvent("tp_noc", x, y, impactZ+100)
+            Delay(tim,function()
+              noclipping = not noclipping
+              GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
+              SetIgnoreMoveInput(false)
+              CallRemoteEvent("Setnoclipserver", noclipping)
+            end)
+           else
+            AddPlayerChat("Can't activate noclip")
+           end
+      end
+      else
+        AddPlayerChat("You can't enable noclip while in water")
+        end
+      else
+        noclipping = not noclipping
+      GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
+      CallRemoteEvent("Setnoclipserver", noclipping)
+      end
+    else
+      noclipping = not noclipping
     GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
     CallRemoteEvent("Setnoclipserver", noclipping)
+    end
   end
-  if noclipping then
-    if key == keys['F'] then
+    if key == "Space Bar" then
+      if spacepressed==false then
+      local x,y,z = GetPlayerLocation()
+      local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, 25000, x, y, -100)
+         if (hittype~=7) then
+          AddPlayerChat("Don't Press SpaceBar while in noclip mode please")
+          spacepressed=true
+          SetIgnoreMoveInput(true)
+          GetPlayerActor(GetPlayerId()):SetActorEnableCollision(true)
+          local tim = 1050
+          if (GetPing()~=0) then
+            tim=GetPing()*6+1000
+          end
+          CallRemoteEvent("tp_noc", x, y, impactZ+100)
+          Delay(tim,function()
+            SetIgnoreMoveInput(false)
+            GetPlayerActor(GetPlayerId()):SetActorEnableCollision(false)
+            spacepressed=false
+          end)
+        else
+          AddPlayerChat("Noclip disabled")
+          noclipping = false
+          GetPlayerActor(GetPlayerId()):SetActorEnableCollision(true)
+          CallRemoteEvent("Setnoclipserver", noclipping)
+        end
+        end
+    elseif key == keys['F'] then
       pressing['F'] = true
     elseif key == keys['B'] then
       pressing['B'] = true
@@ -39,12 +131,10 @@ AddEvent("OnKeyPress", function(key)
       pressing['U'] = true
   elseif key == keys['below'] then
     pressing['below'] = true
-  end
-  end
+    end
 end)
 
 AddEvent("OnKeyRelease", function(key)
-  if noclipping then
     if key == keys['F'] then
       pressing['F'] = false
     elseif key == keys['B'] then
@@ -58,7 +148,6 @@ AddEvent("OnKeyRelease", function(key)
   elseif key == keys['below'] then
     pressing['below'] = false
   end
-  end
 end)
 
 AddRemoteEvent("Setnoclip", function(bool)
@@ -68,6 +157,7 @@ end)
 
 AddEvent("OnGameTick", function(DeltaS)
   if noclipping then
+    if spacepressed==false then
     local fx, fy, fz = GetCameraForwardVector()
     local rx, ry, rz = GetCameraRightVector()
     local ux, uy, uz = GetCameraUpVector()
@@ -84,17 +174,30 @@ AddEvent("OnGameTick", function(DeltaS)
     uz = uz*speed
 
     if pressing['F'] then
+      if (z+fz>100) then
       CallRemoteEvent("tp_noc", x+fx, y+fy, z+fz)
+      end
     elseif pressing['B'] then
+      if (z+fz*-1>100) then
       CallRemoteEvent("tp_noc", x+fx*-1, y+fy*-1, z+fz*-1)
+      end
     elseif pressing['L'] then
+      if (z+rz*-1>100) then
       CallRemoteEvent("tp_noc", x+rx*-1, y+ry*-1, z+rz*-1)
+      end
     elseif pressing['R'] then
+      if (z+rz>100) then
       CallRemoteEvent("tp_noc", x+rx, y+ry, z+rz)
+      end
     elseif pressing['U'] then
+      if (z+uz>100) then
       CallRemoteEvent("tp_noc", x+ux, y+uy, z+uz)
+      end
   elseif pressing['below'] then
+    if (z+uz*-1>100) then
     CallRemoteEvent("tp_noc", x+ux*-1, y+uy*-1, z+uz*-1)
+    end
+  end
   end
   end
 end)
