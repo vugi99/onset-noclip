@@ -94,6 +94,7 @@ AddEvent("OnKeyPress", function(key)
     end
   end
     if key == "Space Bar" then
+      if noclipping then
       if spacepressed==false then
       local x,y,z = GetPlayerLocation()
       local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, 25000, x, y, -100)
@@ -118,6 +119,7 @@ AddEvent("OnKeyPress", function(key)
           GetPlayerActor(GetPlayerId()):SetActorEnableCollision(true)
           CallRemoteEvent("Setnoclipserver", noclipping)
         end
+      end
         end
     elseif key == keys['F'] then
       pressing['F'] = true
