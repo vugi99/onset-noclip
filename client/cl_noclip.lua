@@ -1,6 +1,6 @@
 local noclipping = false
 local spacepressed = false
-local speed = 250
+local speed = 80 
 local pressing =
 {
   F=false,
@@ -34,10 +34,9 @@ AddEvent("OnKeyPress", function(key)
           tim=GetPing()*6
         end
         Delay(tim,function()
-          noclipping = not noclipping
+          noclipping = true
           GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
           SetIgnoreMoveInput(false)
-          CallRemoteEvent("Setnoclipserver", noclipping)
         end)
       else
         local x,y,z = GetPlayerLocation()
@@ -48,12 +47,12 @@ AddEvent("OnKeyPress", function(key)
             if (GetPing()~=0) then
               tim=GetPing()*6+1000
             end
-            CallRemoteEvent("tp_noc", x, y, impactZ+100)
+            actor = GetPlayerActor(GetPlayerId())
+            actor:SetActorLocation(FVector(x, y, impactZ+100))
             Delay(tim,function()
-              noclipping = not noclipping
+              noclipping = true
               GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
               SetIgnoreMoveInput(false)
-              CallRemoteEvent("Setnoclipserver", noclipping)
             end)
            else
             AddPlayerChat("Can't activate noclip")
@@ -68,12 +67,12 @@ AddEvent("OnKeyPress", function(key)
             if (GetPing()~=0) then
               tim=GetPing()*6+1000
             end
-            CallRemoteEvent("tp_noc", x, y, impactZ+100)
+            actor = GetPlayerActor(GetPlayerId())
+            actor:SetActorLocation(FVector(x, y, impactZ+100))
             Delay(tim,function()
-              noclipping = not noclipping
+              noclipping = true
               GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
               SetIgnoreMoveInput(false)
-              CallRemoteEvent("Setnoclipserver", noclipping)
             end)
            else
             AddPlayerChat("Can't activate noclip")
@@ -85,12 +84,10 @@ AddEvent("OnKeyPress", function(key)
       else
         noclipping = not noclipping
       GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
-      CallRemoteEvent("Setnoclipserver", noclipping)
       end
     else
       noclipping = not noclipping
     GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
-    CallRemoteEvent("Setnoclipserver", noclipping)
     end
   end
     if key == "Space Bar" then
@@ -107,7 +104,8 @@ AddEvent("OnKeyPress", function(key)
           if (GetPing()~=0) then
             tim=GetPing()*6+1000
           end
-          CallRemoteEvent("tp_noc", x, y, impactZ+100)
+          actor = GetPlayerActor(GetPlayerId())
+          actor:SetActorLocation(FVector(x, y, impactZ+100))
           Delay(tim,function()
             SetIgnoreMoveInput(false)
             GetPlayerActor(GetPlayerId()):SetActorEnableCollision(false)
@@ -117,7 +115,6 @@ AddEvent("OnKeyPress", function(key)
           AddPlayerChat("Noclip disabled")
           noclipping = false
           GetPlayerActor(GetPlayerId()):SetActorEnableCollision(true)
-          CallRemoteEvent("Setnoclipserver", noclipping)
         end
       end
         end
@@ -152,11 +149,6 @@ AddEvent("OnKeyRelease", function(key)
   end
 end)
 
-AddRemoteEvent("Setnoclip", function(bool)
-  noclipping = bool
-  GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not bool)
-end)
-
 AddEvent("OnGameTick", function(DeltaS)
   if noclipping then
     if spacepressed==false then
@@ -174,30 +166,30 @@ AddEvent("OnGameTick", function(DeltaS)
     ux = ux*speed
     uy = uy*speed
     uz = uz*speed
-
+    actor = GetPlayerActor(GetPlayerId())
     if pressing['F'] then
       if (z+fz>100) then
-      CallRemoteEvent("tp_noc", x+fx, y+fy, z+fz)
+        actor:SetActorLocation(FVector(x+fx, y+fy, z+fz))
       end
     elseif pressing['B'] then
       if (z+fz*-1>100) then
-      CallRemoteEvent("tp_noc", x+fx*-1, y+fy*-1, z+fz*-1)
+        actor:SetActorLocation(FVector( x+fx*-1, y+fy*-1, z+fz*-1))
       end
     elseif pressing['L'] then
       if (z+rz*-1>100) then
-      CallRemoteEvent("tp_noc", x+rx*-1, y+ry*-1, z+rz*-1)
+        actor:SetActorLocation(FVector( x+rx*-1, y+ry*-1, z+rz*-1))
       end
     elseif pressing['R'] then
       if (z+rz>100) then
-      CallRemoteEvent("tp_noc", x+rx, y+ry, z+rz)
+        actor:SetActorLocation(FVector( x+rx, y+ry, z+rz))
       end
     elseif pressing['U'] then
       if (z+uz>100) then
-      CallRemoteEvent("tp_noc", x+ux, y+uy, z+uz)
+        actor:SetActorLocation(FVector( x+ux, y+uy, z+uz))
       end
   elseif pressing['below'] then
     if (z+uz*-1>100) then
-    CallRemoteEvent("tp_noc", x+ux*-1, y+uy*-1, z+uz*-1)
+      actor:SetActorLocation(FVector( x+ux*-1, y+uy*-1, z+uz*-1))
     end
   end
   end

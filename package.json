@@ -1,9 +1,6 @@
 {
 	"author": "Voltaism",
-	"version": "3.1",
-	"server_scripts": [
-		"server/noclip.lua"
-	],
+	"version": "4.0",
         "client_scripts": [
 		"client/cl_noclip.lua"
 	]
