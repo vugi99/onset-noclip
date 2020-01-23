@@ -39,44 +39,10 @@ AddEvent("OnKeyPress", function(key)
           SetIgnoreMoveInput(false)
         end)
       else
-        local x,y,z = GetPlayerLocation()
-        local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, 25000, x, y, -100)
-           if (hittype~=7) then
-            SetIgnoreMoveInput(true)
-            local tim = 1050
-            if (GetPing()~=0) then
-              tim=GetPing()*6+1000
-            end
-            actor = GetPlayerActor(GetPlayerId())
-            actor:SetActorLocation(FVector(x, y, impactZ+100))
-            Delay(tim,function()
-              noclipping = true
-              GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
-              SetIgnoreMoveInput(false)
-            end)
-           else
-            AddPlayerChat("Can't activate noclip")
-           end
+            AddPlayerChat("Can't activate noclip while falling")
       end
       else
-        local x,y,z = GetPlayerLocation()
-        local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, 25000, x, y, -100)
-           if (hittype~=7) then
-            SetIgnoreMoveInput(true)
-            local tim = 1050
-            if (GetPing()~=0) then
-              tim=GetPing()*6+1000
-            end
-            actor = GetPlayerActor(GetPlayerId())
-            actor:SetActorLocation(FVector(x, y, impactZ+100))
-            Delay(tim,function()
-              noclipping = true
-              GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
-              SetIgnoreMoveInput(false)
-            end)
-           else
-            AddPlayerChat("Can't activate noclip")
-           end
+            AddPlayerChat("Can't activate noclip while falling")
       end
       else
         AddPlayerChat("You can't enable noclip while in water")
@@ -118,7 +84,7 @@ AddEvent("OnKeyPress", function(key)
         end
       end
         end
-    elseif key == keys['F'] then
+      elseif key == keys['F'] then
       pressing['F'] = true
     elseif key == keys['B'] then
       pressing['B'] = true
