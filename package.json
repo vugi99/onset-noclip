@@ -1,7 +1,12 @@
 {
 	"author": "Voltaism",
-	"version": "4.1",
+	"version": "4.2",
+        "onset_build": "1.0.3",
         "client_scripts": [
 		"client/cl_noclip.lua"
-	]
+	],
+        "auto_updater": {
+           "package.json": "https://raw.githubusercontent.com/vugi99/onset-noclip/master/package.json",
+           "client/cl_noclip.lua": "https://raw.githubusercontent.com/vugi99/onset-noclip/master/client/cl_noclip.lua"
+        }
 }
