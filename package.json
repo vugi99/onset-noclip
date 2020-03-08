@@ -1,7 +1,7 @@
 {
 	"author": "Voltaism",
-	"version": "4.2",
-        "onset_build": "1.0.3",
+	"version": "5.0",
+        "onset_build": "1.1.0",
         "client_scripts": [
 		"client/cl_noclip.lua"
 	],

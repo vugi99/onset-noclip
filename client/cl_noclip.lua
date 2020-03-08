@@ -10,19 +10,12 @@ local pressing =
   U=false,
   below=false
 }
-local keys =
-{
-  F="W",
-  B="S",
-  L="A",
-  R="D",
-  U="Up", -- No spacebar please
-  below="Left Shift",
-  toggle="V"
-}
+
+local togglekey = "V"
+
 
 AddEvent("OnKeyPress", function(key)
-  if key == keys['toggle'] then
+  if key == togglekey then
     if (not noclipping == true) then
       if (GetPlayerMovementMode()~=0) then
         if (GetPlayerMovementMode()~=8) then
@@ -84,35 +77,40 @@ AddEvent("OnKeyPress", function(key)
         end
       end
         end
-      elseif key == keys['F'] then
-      pressing['F'] = true
-    elseif key == keys['B'] then
-      pressing['B'] = true
-    elseif key == keys['L'] then
-      pressing['L'] = true
-    elseif key == keys['R'] then
-      pressing['R'] = true
-    elseif key == keys['U'] then
-      pressing['U'] = true
-  elseif key == keys['below'] then
-    pressing['below'] = true
-    end
+      end
 end)
 
-AddEvent("OnKeyRelease", function(key)
-    if key == keys['F'] then
-      pressing['F'] = false
-    elseif key == keys['B'] then
-        pressing['B'] = false
-    elseif key == keys['L'] then
-        pressing['L'] = false
-    elseif key == keys['R'] then
-        pressing['R'] = false
-    elseif key == keys['U'] then
-      pressing['U'] = false
-  elseif key == keys['below'] then
-    pressing['below'] = false
-  end
+AddEvent("OnGameTick",function()
+    if GetInputAxisValue("MoveForward") == 1.0 then
+       pressing["F"] = true
+       pressing["B"] = false
+    elseif GetInputAxisValue("MoveForward") == -1.0 then
+      pressing["F"] = false
+      pressing["B"] = true
+    else
+      pressing["F"] = false
+      pressing["B"] = false
+    end
+    if GetInputAxisValue("MoveRight") == 1.0 then
+      pressing["R"] = true
+      pressing["L"] = false
+   elseif GetInputAxisValue("MoveRight") == -1.0 then
+     pressing["R"] = false
+     pressing["L"] = true
+   else
+     pressing["R"] = false
+     pressing["L"] = false
+   end
+   if GetInputAxisValue("MoveVertical") == 1.0 then
+    pressing["U"] = true
+    pressing["below"] = false
+ elseif GetInputAxisValue("MoveVertical") == -1.0 then
+   pressing["U"] = false
+   pressing["below"] = true
+ else
+   pressing["U"] = false
+   pressing["below"] = false
+ end
 end)
 
 AddEvent("OnGameTick", function(DeltaS)
