@@ -1,6 +1,11 @@
+local speed = 80
+local togglekey = "V"
+local mouse_change_speed = true
+
+
 local noclipping = false
 local spacepressed = false
-local speed = 80
+local SAL = ImportPackage("SaveAndLoad")
 local pressing = {
   F=false,
   B=false,
@@ -11,8 +16,6 @@ local pressing = {
 }
 
 local map = GetWorld():GetMapName()
-
-local togglekey = "V"
 
 function SpacePressed_Teleport(x, y, impactZ)
    spacepressed=true
@@ -31,6 +34,24 @@ function SpacePressed_Teleport(x, y, impactZ)
    end)
 end
 
+function SAL_Save_Speed()
+    if SAL then
+        SAL.StoreIntValue("noclip_speed", speed)
+    end
+end
+
+AddEvent("OnPackageStart", function()
+     if SAL then
+         local speed_stored = SAL.GetIntValue("noclip_speed")
+         if speed_stored then
+             if speed_stored > 0 then
+                 speed = speed_stored
+             end
+         else
+             SAL_Save_Speed()
+         end
+     end
+end)
 
 AddEvent("OnKeyPress", function(key)
    if key == togglekey then
@@ -172,5 +193,26 @@ AddEvent("OnPlayerSpawn", function()
     if noclipping then
         noclipping = false
         GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
+    end
+end)
+
+AddEvent("OnKeyPress", function(key)
+    if (mouse_change_speed and noclipping) then
+         if key == "Mouse Wheel Up" then
+             speed = speed + 1
+             SAL_Save_Speed()
+         elseif key == "Mouse Wheel Down" then
+             if speed > 1 then
+                 speed = speed - 1
+                 SAL_Save_Speed()
+             end
+         end
+    end
+end)
+
+AddEvent("OnRenderHUD", function()
+    if (mouse_change_speed and noclipping) then
+        DrawText(2, 275, "Noclip speed : " .. tostring(speed))
+        DrawText(2, 290, "Use Mouse Wheel to change noclip speed")
     end
 end)
