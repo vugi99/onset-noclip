@@ -34,8 +34,7 @@ function SpacePressed_Teleport(x, y, impactZ)
 end
 
 function Save_Speed()
-   local success = SetStorageValue("noclip_speed", speed)
-   AddPlayerChat(tostring(success))
+   SetStorageValue("noclip_speed", speed)
 end
 
 AddEvent("OnPackageStart", function()
