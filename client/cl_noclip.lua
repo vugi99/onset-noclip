@@ -5,7 +5,6 @@ local mouse_change_speed = true
 
 local noclipping = false
 local spacepressed = false
-local SAL = ImportPackage("SaveAndLoad")
 local pressing = {
   F=false,
   B=false,
@@ -34,23 +33,20 @@ function SpacePressed_Teleport(x, y, impactZ)
    end)
 end
 
-function SAL_Save_Speed()
-    if SAL then
-        SAL.StoreIntValue("noclip_speed", speed)
-    end
+function Save_Speed()
+   local success = SetStorageValue("noclip_speed", speed)
+   AddPlayerChat(tostring(success))
 end
 
 AddEvent("OnPackageStart", function()
-     if SAL then
-         local speed_stored = SAL.GetIntValue("noclip_speed")
-         if speed_stored then
-             if speed_stored > 0 then
-                 speed = speed_stored
-             end
-         else
-             SAL_Save_Speed()
-         end
-     end
+      local speed_stored = GetStorageValue("noclip_speed")
+      if speed_stored then
+           if speed_stored > 0 then
+               speed = speed_stored
+           end
+      else
+          Save_Speed()
+      end
 end)
 
 AddEvent("OnKeyPress", function(key)
@@ -200,11 +196,11 @@ AddEvent("OnKeyPress", function(key)
     if (mouse_change_speed and noclipping) then
          if key == "Mouse Wheel Up" then
              speed = speed + 1
-             SAL_Save_Speed()
+             Save_Speed()
          elseif key == "Mouse Wheel Down" then
              if speed > 1 then
                  speed = speed - 1
-                 SAL_Save_Speed()
+                 Save_Speed()
              end
          end
     end
