@@ -49,46 +49,50 @@ AddEvent("OnPackageStart", function()
 end)
 
 AddEvent("OnKeyPress", function(key)
-   if key == togglekey then
-      if (not noclipping == true) then
-         if (GetPlayerMovementMode()~=0) then
-            if (GetPlayerMovementMode()~=8) then
-               if (GetPlayerMovementMode()~=6 and GetPlayerMovementMode()~=5) then
-                  SetIgnoreMoveInput(true)
-                  local tim = 50
-                  if (GetPing()~=0) then
-                     tim=GetPing()*6
+   if not spacepressed then
+      if key == togglekey then
+         if (not noclipping == true) then
+            if (GetPlayerMovementMode()~=0) then
+               if (GetPlayerMovementMode()~=8) then
+                  if (GetPlayerMovementMode()~=6 and GetPlayerMovementMode()~=5) then
+                     SetIgnoreMoveInput(true)
+                     local tim = 50
+                     if (GetPing()~=0) then
+                        tim=GetPing()*6
+                     end
+                     Delay(tim,function()
+                        noclipping = true
+                        GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
+                        SetIgnoreMoveInput(false)
+                     end)
+                  else
+                     AddPlayerChat("Can't activate noclip while falling")
                   end
-                  Delay(tim,function()
-                     noclipping = true
-                     GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
-                     SetIgnoreMoveInput(false)
-                  end)
                else
-                  AddPlayerChat("Can't activate noclip while falling")
+                  local x,y,z = GetPlayerLocation()
+                  local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z + 25000, x, y, z - 25000)
+                  if hittype ~= 7 then
+                     noclipping = true
+                     SpacePressed_Teleport(x, y, impactZ)
+                  else
+                     AddPlayerChat("You can't enable noclip while in water")
+                  end
                end
             else
-               local x,y,z = GetPlayerLocation()
-               local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z + 25000, x, y, z - 25000)
-               if hittype ~= 7 then
-                   noclipping = true
-                   SpacePressed_Teleport(x, y, impactZ)
+               if GetPlayerVehicle(GetPlayerId()) == 0 then
+                  noclipping = not noclipping
+                  GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
                else
-                  AddPlayerChat("You can't enable noclip while in water")
+                  AddPlayerChat("Can't activate noclip while in vehicle")
                end
             end
          else
             noclipping = not noclipping
             GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
          end
-      else
-         noclipping = not noclipping
-         GetPlayerActor(GetPlayerId()):SetActorEnableCollision(not noclipping)
       end
-   end
-   if key == "Space Bar" then
-      if noclipping then
-         if spacepressed==false then
+      if key == "Space Bar" then
+         if noclipping then
             local x,y,z = GetPlayerLocation()
             local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z + 25000, x, y, z - 25000)
             if (hittype~=7) then
@@ -139,7 +143,7 @@ end)
 
 AddEvent("OnGameTick", function(DeltaS)
    if noclipping then
-      if spacepressed==false then
+      if not spacepressed then
           local fx, fy, fz = GetCameraForwardVector()
           local rx, ry, rz = GetCameraRightVector()
           local ux, uy, uz = GetCameraUpVector()
